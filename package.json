@@ -5,13 +5,29 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "prepare": "husky",
+    "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^4.21.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
-  }
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.1"
+  },
+  
+  "lint-staged": {
+      "**/*.{js,jsx,ts,tsx}": [
+        "eslint --max-warnings=0",
+        "prettier --write"
+      ],
+      "**/*.{html,json,css,scss,md,mdx}": ["prettier -w"]
+    }
+
 }
