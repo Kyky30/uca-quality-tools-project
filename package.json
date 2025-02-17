@@ -4,16 +4,23 @@
   "description": "Projet noté - Qualité algorithmique",
   "main": "src/index.js",
   "scripts": {
+<<<<<<< HEAD
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "prepare": "husky",
     "test": "echo \"No test specified\" && exit 0"
+=======
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node-dev --respawn src/index.ts",
+    "build": "tsc"
+>>>>>>> d505439 (refactor: passage au typescript)
   },
   "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^4.21.2"
+    "ejs": "^3.x.x",
+    "express": "^4.x.x"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
     "husky": "^9.1.7",
@@ -30,4 +37,12 @@
       "**/*.{html,json,css,scss,md,mdx}": ["prettier -w"]
     }
 
+=======
+    "@types/express": "^4.17.21",
+    "@types/node": "^16.18.126",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.9.5"
+  }
+>>>>>>> d505439 (refactor: passage au typescript)
 }
