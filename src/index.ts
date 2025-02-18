@@ -51,10 +51,14 @@ app.get("/posts/:id", (req: Request, res: Response) => {
 app.post("/posts/:id", (req: Request, res: Response) => {
   console.log(req.params.id);
   const updatedPost = postService.updatePost(parseInt(req.params.id), req.body);
-  res.redirect(`/posts/${req.params.id}`);
+  if (updatedPost) {
+    res.json({ message: "Post updated successfully", post: updatedPost });
+  } else {
+    res.status(404).json({ error: "Post not found" });
+  }
 });
 
-const PORT = process.env.PORT || 3009;
+const PORT = 3009;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 }); 
