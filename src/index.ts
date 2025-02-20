@@ -52,7 +52,7 @@ app.post("/posts/:id", (req: Request, res: Response) => {
   console.log(req.params.id);
   const updatedPost = postService.updatePost(parseInt(req.params.id), req.body);
   if (updatedPost) {
-    res.json({ message: "Post updated successfully", post: updatedPost });
+    res.redirect(`/posts/${req.params.id}`);
   } else {
     res.status(404).json({ error: "Post not found" });
   }
