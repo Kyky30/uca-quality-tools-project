@@ -1,5 +1,5 @@
 import { Post, PostData } from '../types';
-const data = require("../data.json");
+import data from '../data.json';
 
 class PostService {
   private posts: Post[];
@@ -44,4 +44,4 @@ class PostService {
   }
 }
 
-export default PostService; 
+export default PostService;
