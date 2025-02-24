@@ -26,7 +26,7 @@ jobs:
               run: npm run lint
 
             - name: Run unit tests
-              run: npx vitest run "src/tests/**/*.test.ts" --exclude "src/tests/e2e/**"
+              run: npx vitest run --exclude "src/tests/e2e/**/*.spec.ts"
 
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
