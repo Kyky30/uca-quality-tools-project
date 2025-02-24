@@ -67,16 +67,30 @@ jobs:
             - name: Build project
               run: npm run build || echo "No build script found, continuing..."
 
+            - name: Create temporary Playwright config
+              run: |
+                  echo "
+                  import { defineConfig } from '@playwright/test';
+
+                  export default defineConfig({
+                    use: {
+                      baseURL: 'http://localhost:3009',
+                    },
+                    webServer: {
+                      reuseExistingServer: true,
+                    },
+                  });
+                  " > playwright.config.temp.ts
+
             - name: Start server and run Playwright tests
               run: |
-                  # Démarrer le serveur en arrière-plan avec npx pour s'assurer que ts-node-dev est disponible
+                  # Démarrer le serveur en arrière-plan
                   npx ts-node-dev --respawn src/index.ts &
                   # Attendre que le serveur soit prêt
                   sleep 15
-                  # Exécuter les tests Playwright avec l'option pour réutiliser le serveur existant
-                  PLAYWRIGHT_REUSE_SERVER=1 npx playwright test
+                  # Exécuter les tests Playwright avec la config temporaire
+                  npx playwright test --config=playwright.config.temp.ts
               env:
-                  # Ajouter les variables d'environnement nécessaires
                   NODE_ENV: test
 
             - name: Upload Playwright report
