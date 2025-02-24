@@ -33,7 +33,7 @@ jobs:
 
             - name: Start server and run E2E tests
               run: |
-                  npm run dev &
+                  npx ts-node src/index.ts &
                   sleep 5
                   npx playwright test
               env:
