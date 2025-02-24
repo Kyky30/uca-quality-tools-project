@@ -55,14 +55,26 @@ jobs:
                   node-version: "18"
                   cache: "npm"
 
+            - name: Install pnpm
+              run: npm install -g pnpm
+
             - name: Install dependencies
               run: npm ci
 
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
 
-            - name: Run Playwright tests
-              run: npx playwright test
+            - name: Start server and run Playwright tests
+              run: |
+                  # Démarrer le serveur en arrière-plan
+                  npm run dev &
+                  # Attendre que le serveur soit prêt
+                  sleep 10
+                  # Exécuter les tests Playwright
+                  npx playwright test
+              env:
+                  # Ajouter les variables d'environnement nécessaires
+                  NODE_ENV: test
 
             - name: Upload Playwright report
               if: always()
