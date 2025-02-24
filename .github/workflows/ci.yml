@@ -11,7 +11,8 @@ jobs:
         name: ESLint
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout code
+              uses: actions/checkout@v3
 
             - name: Setup Node.js
               uses: actions/setup-node@v3
@@ -29,7 +30,8 @@ jobs:
         name: Unit Tests
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout code
+              uses: actions/checkout@v3
 
             - name: Setup Node.js
               uses: actions/setup-node@v3
@@ -47,7 +49,8 @@ jobs:
         name: E2E Tests
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout code
+              uses: actions/checkout@v3
 
             - name: Setup Node.js
               uses: actions/setup-node@v3
@@ -59,32 +62,62 @@ jobs:
               run: npm ci
 
             - name: Install global dependencies
-              run: npm install -g ts-node-dev pnpm
+              run: npm install -g ts-node-dev
 
-            - name: Install Playwright browsers
-              run: npx playwright install --with-deps
+            - name: Install Playwright
+              run: npx playwright install --with-deps chromium
 
-            - name: Build project
-              run: npm run build || echo "No build script found, continuing..."
+            - name: Create simple Playwright config
+              run: |
+                  cat > playwright.ci.config.js << 'EOL'
+                  // @ts-check
+                  const { defineConfig } = require('@playwright/test');
 
-            - name: Start server
+                  module.exports = defineConfig({
+                    testDir: './src/tests/e2e',
+                    fullyParallel: false,
+                    forbidOnly: true,
+                    retries: 0,
+                    workers: 1,
+                    reporter: 'html',
+                    use: {
+                      baseURL: 'http://localhost:3009',
+                      screenshot: 'only-on-failure',
+                      trace: 'on-first-retry',
+                    },
+                    projects: [
+                      {
+                        name: 'chromium',
+                        use: { browserName: 'chromium' },
+                      },
+                    ],
+                    /* Pas de configuration webServer pour éviter les conflits */
+                  });
+                  EOL
+
+            - name: Start server and run tests
               run: |
                   # Démarrer le serveur en arrière-plan
-                  npx ts-node-dev --respawn src/index.ts &
-                  # Attendre que le serveur soit prêt
-                  sleep 15
-                  echo "Server should be running now"
-              env:
-                  NODE_ENV: test
+                  npx ts-node-dev src/index.ts &
+                  PID=$!
+                  echo "Server started with PID $PID"
 
-            - name: Run Playwright tests
-              run: |
-                  # Désactiver la configuration webServer de Playwright
-                  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 PLAYWRIGHT_SKIP_VALIDATION=1 npx playwright test --browser=chromium
+                  # Attendre que le serveur soit prêt
+                  echo "Waiting for server to be ready..."
+                  timeout 30 bash -c 'until curl -s http://localhost:3009 > /dev/null; do sleep 1; done' || echo "Server may not be ready, but continuing anyway"
+
+                  # Exécuter les tests Playwright
+                  echo "Running Playwright tests..."
+                  npx playwright test --config=playwright.ci.config.js
+
+                  # Arrêter le serveur à la fin
+                  echo "Stopping server..."
+                  kill $PID || true
               env:
                   NODE_ENV: test
-                  # Indiquer l'URL de base pour les tests
-                  BASE_URL: http://localhost:3009
+                  # Désactiver explicitement l'auto-démarrage du serveur
+                  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+                  PLAYWRIGHT_SKIP_VALIDATION: 1
 
             - name: Upload Playwright report
               if: always()
