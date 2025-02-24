@@ -73,8 +73,8 @@ jobs:
                   npx ts-node-dev --respawn src/index.ts &
                   # Attendre que le serveur soit prêt
                   sleep 15
-                  # Exécuter les tests Playwright
-                  npx playwright test
+                  # Exécuter les tests Playwright avec l'option pour réutiliser le serveur existant
+                  PLAYWRIGHT_REUSE_SERVER=1 npx playwright test
               env:
                   # Ajouter les variables d'environnement nécessaires
                   NODE_ENV: test
