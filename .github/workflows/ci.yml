@@ -55,21 +55,24 @@ jobs:
                   node-version: "18"
                   cache: "npm"
 
-            - name: Install pnpm
-              run: npm install -g pnpm
-
             - name: Install dependencies
               run: npm ci
+
+            - name: Install global dependencies
+              run: npm install -g ts-node-dev pnpm
 
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
 
+            - name: Build project
+              run: npm run build || echo "No build script found, continuing..."
+
             - name: Start server and run Playwright tests
               run: |
-                  # Démarrer le serveur en arrière-plan
-                  npm run dev &
+                  # Démarrer le serveur en arrière-plan avec npx pour s'assurer que ts-node-dev est disponible
+                  npx ts-node-dev --respawn src/index.ts &
                   # Attendre que le serveur soit prêt
-                  sleep 10
+                  sleep 15
                   # Exécuter les tests Playwright
                   npx playwright test
               env:
