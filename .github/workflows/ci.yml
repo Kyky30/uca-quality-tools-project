@@ -26,11 +26,7 @@ jobs:
               run: npm run lint
 
             - name: Run unit tests
-<<<<<<< HEAD
-              run: vitest run "src/tests/**/*.test.ts"
-=======
               run: npx vitest run "src/tests/**/*.test.ts"
->>>>>>> c3cb8f4 (fix : unit test)
 
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
