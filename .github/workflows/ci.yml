@@ -31,8 +31,13 @@ jobs:
             - name: Install Playwright browsers
               run: npx playwright install --with-deps
 
-            - name: Run E2E tests
-              run: npx playwright test
+            - name: Start server and run E2E tests
+              run: |
+                  npm run dev &
+                  sleep 5
+                  npx playwright test
+              env:
+                  CI: true
 
             - name: Upload test results
               if: always()
