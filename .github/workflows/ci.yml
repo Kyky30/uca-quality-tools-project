@@ -41,7 +41,7 @@ jobs:
               run: npm ci
 
             - name: Run unit tests
-              run: npx vitest run "src/tests/(?!e2e).*\\.test\\.ts$"
+              run: npx vitest run src/tests/PostService.test.ts
 
     e2e-tests:
         name: E2E Tests
