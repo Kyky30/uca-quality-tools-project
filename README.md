@@ -1,4 +1,4 @@
-
+Dorian Rochette - Kylian Vinel - Julien Angénieux - Sébastien Combe
 
 # Test de performance
 
